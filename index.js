@@ -22,6 +22,10 @@ mofron.layout.VrtCenter = class extends mofron.Layout {
     
     layoutConts (idx, tgt) {
         try {
+            if (true === this.isPadding()) {
+                return;
+            }
+            
             tgt.style({
                 position : 'relative'
             });
@@ -33,7 +37,6 @@ mofron.layout.VrtCenter = class extends mofron.Layout {
                 });
             } else if (null !== this.height()) {
                 this.isPadding(true);
-                
                 var ins_cmp = new mofron.Component({
                                   addChild : tgt,
                                   style    : {

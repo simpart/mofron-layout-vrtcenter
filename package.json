@@ -1,6 +1,6 @@
 {
   "name": "mofron-layout-vrtcenter",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "vertical center layout for mofron",
   "main": "index.js",
   "scripts": {
