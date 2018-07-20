@@ -14,51 +14,63 @@ mofron.layout.VrtCenter = class extends mofron.Layout {
             super();
             this.name('VrtCenter');
             this.prmOpt(op);
+            
+            this.getParam().check(
+                /* rate */
+                (rt) => {
+                    try {
+                        if ('number' !== typeof rt) {
+                            throw new Error('invalid parameter');
+                        }
+                        if ((0 > rt) || (100 < rt)) {
+                            throw new Error('invalid parameter');
+                        }
+                    } catch (e) {
+                        console.error(e.stack);
+                        throw e;
+                    }
+                },
+                /* type */
+                (tp) => {
+                    try {
+                        if (undefined === tp) {
+                            return 'relative';
+                        }
+                        if ('string' !== typeof tp) {
+                            throw new Error('invalid parameter');
+                        }
+                        if (('relative' !== tp) && ('margin' !== tp) && ('padding' !== tp)) {
+                            throw new Error('invalid parameter');
+                        }
+                    } catch (e) {
+                        console.error(e.stack);
+                        throw e;
+                    }
+                }
+            );
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    layoutConts (idx, tgt) {
+    contents (idx, tgt) {
         try {
-            if (true === this.isPadding()) {
-                return;
-            }
+            let rate = this.value()[0];
+            let type = this.value()[1];
             
-            tgt.style({
-                position : 'relative'
-            });
-            
-            if (null !== this.rate()) {
-                tgt.style({
-                    height : this.rate() + '%',
-                    top    : (100 - this.rate())/2 + '%'
-                });
-            } else if (null !== this.height()) {
-                this.isPadding(true);
-                var ins_cmp = new mofron.Component({
-                                  addChild : tgt,
-                                  style    : {
-                                                 height   : '50%',
-                                                 position : 'relative',
-                                                 top      : '50%'
-                                             }
-                              });
-                ins_cmp.vdom().attr({
-                    layout : 'mofron-layout-vrtcenter'
-                });
-                this.target().addChild(
-                    ins_cmp,
-                    tgt.visible(),
-                    (0 === this.target().child().length) ? 0 : idx
-                );
-                
-                this.isPadding(false);
-                tgt.style({
-                    top : '-' + this.height()/2 + 'px'
-                });
+            if ('relative' === type) {
+                tgt.adom().style({
+                    position : type,
+                    top      : (100 -rate)/2 + '%'
+                }); 
+            } else {    
+                let set_style = {};
+                set_style[type+'-top'] =  (100 - rate)/2 + '%';
+                tgt.adom().style(set_style);
             }
+            tgt.height(rate + '%');
+            
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -84,40 +96,6 @@ mofron.layout.VrtCenter = class extends mofron.Layout {
             throw e;
         }
     }
-    
-    height (hei) {
-        try {
-            if (undefined === hei) {
-                /* getter */
-                return (undefined === this.m_height) ? null : this.m_height;
-            }
-            /* setter */
-            if (('number' !== typeof hei) && ('string' !== typeof hei)) {
-                throw new Error('invalid parameter');
-            }
-            this.m_height = hei;
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
-    
-    isPadding (flg) {
-        try {
-            if (undefined === flg) {
-                /* getter */
-                return (undefined === this.m_padding) ? false : this.m_padding;
-            }
-            /* setter */
-            if ('boolean' !== typeof flg) {
-                throw new Error('invalid parameter');
-            }
-            this.m_padding = flg;
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
 }
-mofron.layout.vrtcenter = {};
 module.exports = mofron.layout.VrtCenter;
+/* end of file */
